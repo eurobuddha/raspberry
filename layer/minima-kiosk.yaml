@@ -4,7 +4,7 @@
 # X-Env-Layer-Desc: Minima blockchain node with Cage/Chromium kiosk displaying MDS Hub
 # X-Env-Depends: rpi-user-credentials, systemd-net-min
 # X-Env-VarPrefix: kiosk
-# X-Env-Var-url: https://127.0.0.1:9005
+# X-Env-Var-url: https://127.0.0.1:9003
 # X-Env-Var-url-Required: yes
 # X-Env-Var-url-Valid: regex:^https://.*
 # X-Env-Var-url-Set: lazy

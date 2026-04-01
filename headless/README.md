@@ -49,7 +49,7 @@ bash setup-minima-headless.sh
 From any device on your network, open:
 
 ```
-https://minima.local:9005
+https://minima.local:9003
 ```
 
 - **Password:** `minima` (change this via the Security MiniDapp)
@@ -89,13 +89,13 @@ The setup script applies these automatically for the Pi Zero 2 W's 512MB RAM:
 | Port | Service                    |
 |------|----------------------------|
 | 9001 | Minima P2P                 |
-| 9002 | Minima RPC                 |
-| 9005 | MDS Hub (HTTPS)            |
+| 9003 | MDS Hub (HTTPS)            |
+| 9005 | Minima RPC                 |
 
 ## Installing MiniDapps
 
-Once the MDS Hub is running, you can install MiniDapps (`.mds.zip` files) via the Hub interface at `https://minima.local:9005`, or via RPC:
+Once the MDS Hub is running, you can install MiniDapps (`.mds.zip` files) via the Hub interface at `https://minima.local:9003`, or via RPC:
 
 ```bash
-curl -k https://localhost:9002/mds%20action:install%20file:/path/to/mydapp.mds.zip
+curl -k https://localhost:9005/mds%20action:install%20file:/path/to/mydapp.mds.zip
 ```

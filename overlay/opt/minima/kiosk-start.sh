@@ -5,7 +5,7 @@
 #  then switches to the MDS Hub.
 # ============================================================
 
-MDS_URL="https://127.0.0.1:9005"
+MDS_URL="https://127.0.0.1:9003"
 LOADING_PAGE="file:///opt/minima/loading.html"
 
 # Chromium flags for kiosk mode
