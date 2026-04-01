@@ -30,6 +30,7 @@ mmdebstrap:
 
     # ── Create minima system user ──
     chroot "$ROOTFS" useradd -r -m -s /bin/bash minima
+    chroot "$ROOTFS" usermod -aG video,render,input minima
 
     # ── Install Minima JAR ──
     mkdir -p "$ROOTFS/opt/minima"
@@ -79,14 +80,14 @@ mmdebstrap:
 
     # zram swap config
     cat > "$ROOTFS/etc/default/zramswap" << 'ZRAM'
-    ALGO=zstd
-    PERCENT=50
-    ZRAM
+ALGO=zstd
+PERCENT=50
+ZRAM
 
     # ── Auto-login minima user on tty1 (needed for Cage) ──
     mkdir -p "$ROOTFS/etc/systemd/system/getty@tty1.service.d"
     cat > "$ROOTFS/etc/systemd/system/getty@tty1.service.d/autologin.conf" << 'AUTOLOGIN'
-    [Service]
-    ExecStart=
-    ExecStart=-/sbin/agetty --autologin minima --noclear %I $TERM
-    AUTOLOGIN
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin minima --noclear %I $TERM
+AUTOLOGIN

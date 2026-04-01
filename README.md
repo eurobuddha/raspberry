@@ -33,13 +33,13 @@ See [headless/README.md](headless/README.md) for details.
 
 ### Option B: Build Your Own Image
 
-Requirements: Docker, or a Raspberry Pi running 64-bit Pi OS.
+Requirements: A Raspberry Pi running 64-bit Pi OS, or Docker on Mac/Linux.
 
 ```bash
 git clone https://github.com/eurobuddha/raspberry.git
 cd raspberry
-./build.sh              # Docker build (Mac/Linux)
-./build.sh --native     # Native build (on a Pi)
+./build.sh --native     # Build on a Pi (recommended)
+./build.sh              # Cross-compile via Docker (Mac/Linux)
 ```
 
 The image lands in `output/minima-os.img`.

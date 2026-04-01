@@ -76,13 +76,19 @@ sudo chown minima:minima /home/minima/.minima
 JAR_URL="https://github.com/nicholasHTM/Minima/raw/refs/heads/master/jar/minima.jar"
 
 echo -e "  ${DIM}Downloading minima.jar...${NC}"
-sudo curl -sL "$JAR_URL" -o /opt/minima/minima.jar
+sudo curl -sfL "$JAR_URL" -o /opt/minima/minima.jar || fail "Failed to download minima.jar"
+# Verify it's actually a JAR
+if ! file /opt/minima/minima.jar | grep -qi "java archive\|zip"; then
+  sudo rm -f /opt/minima/minima.jar
+  fail "Downloaded file is not a valid JAR. Check the URL."
+fi
 info "minima.jar installed to /opt/minima/"
 
 # ---- Set default MDS password ----
 
 if [[ ! -f /etc/minima/minima.env ]]; then
   echo 'MDS_PASSWORD=minima' | sudo tee /etc/minima/minima.env > /dev/null
+  sudo chmod 600 /etc/minima/minima.env
   info "Default MDS password set to 'minima'"
 else
   info "MDS password already configured."

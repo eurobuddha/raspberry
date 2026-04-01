@@ -87,8 +87,8 @@
       attempts++;
       const statusEl = document.getElementById('status');
 
-      fetch(MDS_URL, { mode: 'no-cors' })
-        .then(() => {
+      fetch(MDS_URL)
+        .then(res => {
           statusEl.textContent = 'CONNECTED';
           setTimeout(() => {
             window.location.href = MDS_URL;
