@@ -1,0 +1,33 @@
+# ============================================================
+#  Minima OS — Docker Build Environment
+#  Cross-compiles arm64 Raspberry Pi images on x86_64 hosts.
+# ============================================================
+
+FROM debian:trixie-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install rpi-image-gen dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    mmdebstrap \
+    qemu-user-static \
+    binfmt-support \
+    systemd-container \
+    fdisk \
+    dosfstools \
+    e2fsprogs \
+    mount \
+    kpartx \
+    xz-utils \
+    curl \
+    ca-certificates \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone rpi-image-gen
+RUN git clone --depth 1 https://github.com/raspberrypi/rpi-image-gen.git /build/rpi-image-gen
+
+WORKDIR /build
+
+CMD ["/bin/bash"]

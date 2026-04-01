@@ -1,0 +1,19 @@
+[Unit]
+Description=Minima Kiosk Display
+After=minima-node.service graphical.target
+Wants=minima-node.service
+
+[Service]
+Type=simple
+User=minima
+Group=minima
+TTYPath=/dev/tty1
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=WLR_LIBINPUT_NO_DEVICES=1
+ExecStart=/usr/bin/cage -- /opt/minima/kiosk-start.sh
+Restart=always
+RestartSec=5
+StandardError=journal
+
+[Install]
+WantedBy=graphical.target

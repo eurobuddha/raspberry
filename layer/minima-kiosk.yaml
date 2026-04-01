@@ -1,0 +1,92 @@
+# METABEGIN
+# X-Env-Layer-Name: minima-kiosk
+# X-Env-Layer-Category: app
+# X-Env-Layer-Desc: Minima blockchain node with Cage/Chromium kiosk
+# X-Env-Depends: rpi-user-credentials, systemd-net-min
+# X-Env-VarPrefix: kiosk
+# X-Env-Var-url: https://127.0.0.1:15003
+# X-Env-Var-url-Required: yes
+# X-Env-Var-url-Valid: regex:^https://.*
+# X-Env-Var-url-Set: lazy
+# METAEND
+
+mmdebstrap:
+  packages:
+    - default-jre-headless
+    - cage
+    - chromium
+    - xwayland
+    - avahi-daemon
+    - network-manager
+    - curl
+    - zram-tools
+    - plymouth
+    - plymouth-themes
+
+  customize-hook: |
+    #!/bin/sh
+    set -e
+    ROOTFS="$1"
+
+    # ── Create minima system user ──
+    chroot "$ROOTFS" useradd -r -m -s /bin/bash minima
+
+    # ── Install Minima JAR ──
+    mkdir -p "$ROOTFS/opt/minima"
+    mkdir -p "$ROOTFS/etc/minima"
+    mkdir -p "$ROOTFS/home/minima/.minima"
+    cp "@SRCROOT/overlay/opt/minima/minima.jar" "$ROOTFS/opt/minima/minima.jar"
+    chmod 644 "$ROOTFS/opt/minima/minima.jar"
+
+    # ── Install kiosk startup wrapper ──
+    cp "@SRCROOT/overlay/opt/minima/kiosk-start.sh" "$ROOTFS/opt/minima/kiosk-start.sh"
+    chmod 755 "$ROOTFS/opt/minima/kiosk-start.sh"
+
+    # ── Install loading page ──
+    cp "@SRCROOT/overlay/opt/minima/loading.html" "$ROOTFS/opt/minima/loading.html"
+
+    # ── Default MDS password ──
+    echo 'MDS_PASSWORD=minima' > "$ROOTFS/etc/minima/minima.env"
+    chmod 600 "$ROOTFS/etc/minima/minima.env"
+
+    # ── Install systemd services ──
+    cp "@SRCROOT/overlay/etc/systemd/system/minima-node.service" \
+       "$ROOTFS/etc/systemd/system/minima-node.service"
+    cp "@SRCROOT/overlay/etc/systemd/system/minima-kiosk.service" \
+       "$ROOTFS/etc/systemd/system/minima-kiosk.service"
+
+    # ── Enable services ──
+    chroot "$ROOTFS" systemctl enable minima-node.service
+    chroot "$ROOTFS" systemctl enable minima-kiosk.service
+    chroot "$ROOTFS" systemctl enable avahi-daemon.service
+    chroot "$ROOTFS" systemctl enable NetworkManager.service
+
+    # ── Chromium policies (suppress warnings, disable password manager) ──
+    mkdir -p "$ROOTFS/etc/chromium/policies/managed"
+    cp "@SRCROOT/overlay/etc/chromium-browser/policies/managed/minima.json" \
+       "$ROOTFS/etc/chromium/policies/managed/minima.json"
+
+    # ── Permissions ──
+    chroot "$ROOTFS" chown -R minima:minima /home/minima/.minima
+    chroot "$ROOTFS" chown -R minima:minima /opt/minima
+
+    # ── Memory optimizations for Pi ──
+    # GPU memory: 64MB is enough for Cage+Chromium (lower causes rendering issues)
+    echo "gpu_mem=64" >> "$ROOTFS/boot/firmware/config.txt"
+
+    # tmpfs for /tmp to reduce SD card writes
+    echo "tmpfs /tmp tmpfs defaults,noatime,nosuid,size=128m 0 0" >> "$ROOTFS/etc/fstab"
+
+    # zram swap config
+    cat > "$ROOTFS/etc/default/zramswap" << 'ZRAM'
+    ALGO=zstd
+    PERCENT=50
+    ZRAM
+
+    # ── Auto-login minima user on tty1 (needed for Cage) ──
+    mkdir -p "$ROOTFS/etc/systemd/system/getty@tty1.service.d"
+    cat > "$ROOTFS/etc/systemd/system/getty@tty1.service.d/autologin.conf" << 'AUTOLOGIN'
+    [Service]
+    ExecStart=
+    ExecStart=-/sbin/agetty --autologin minima --noclear %I $TERM
+    AUTOLOGIN

@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Minima
+Description=Minima OS boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/minima
+ScriptFile=/usr/share/plymouth/themes/minima/minima.script

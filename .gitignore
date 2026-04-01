@@ -1,0 +1,6 @@
+output/
+rpi-image-gen/
+overlay/opt/minima/minima.jar
+*.img
+*.img.xz
+.claude/

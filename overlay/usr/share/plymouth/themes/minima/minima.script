@@ -1,0 +1,30 @@
+# Minima OS Plymouth Boot Splash
+# Displays centered logo with a pulsing animation on black background
+
+Window.SetBackgroundTopColor(0.05, 0.05, 0.05);
+Window.SetBackgroundBottomColor(0.02, 0.02, 0.02);
+
+logo.image = Image("logo.png");
+logo.sprite = Sprite(logo.image);
+
+# Center the logo
+logo.sprite.SetX(Window.GetWidth() / 2 - logo.image.GetWidth() / 2);
+logo.sprite.SetY(Window.GetHeight() / 2 - logo.image.GetHeight() / 2);
+logo.sprite.SetZ(10);
+
+# Pulse animation
+progress = 0;
+
+fun refresh_callback() {
+    progress += 0.02;
+    opacity = Math.Abs(Math.Sin(progress)) * 0.4 + 0.6;
+    logo.sprite.SetOpacity(opacity);
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+# Suppress text messages
+fun message_callback(text) {
+}
+
+Plymouth.SetMessageFunction(message_callback);

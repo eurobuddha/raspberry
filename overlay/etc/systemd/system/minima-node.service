@@ -1,0 +1,28 @@
+[Unit]
+Description=Minima Node
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=minima
+Group=minima
+WorkingDirectory=/opt/minima
+ExecStart=/usr/bin/java -Xmx256m -jar /opt/minima/minima.jar \
+    -port 15001 \
+    -data /home/minima/.minima \
+    -mdsenable \
+    -mdspassword "${MDS_PASSWORD}" \
+    -rpcenable
+Restart=always
+RestartSec=10
+EnvironmentFile=/etc/minima/minima.env
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/home/minima/.minima
+ProtectHome=false
+
+[Install]
+WantedBy=multi-user.target

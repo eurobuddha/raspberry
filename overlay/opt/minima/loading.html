@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minima OS</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .logo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 40px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .logo svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    color: #ffffff;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #333;
+    border-top-color: #00d4aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 24px;
+  }
+
+  .status {
+    font-size: 14px;
+    color: #666;
+    letter-spacing: 2px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+</style>
+</head>
+<body>
+  <div class="logo">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" fill="none" stroke="#00d4aa" stroke-width="2"/>
+      <circle cx="50" cy="50" r="30" fill="none" stroke="#00d4aa" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="50" cy="50" r="15" fill="none" stroke="#00d4aa" stroke-width="1" opacity="0.3"/>
+      <circle cx="50" cy="50" r="4" fill="#00d4aa"/>
+    </svg>
+  </div>
+  <h1>Minima</h1>
+  <div class="spinner"></div>
+  <div class="status" id="status">STARTING NODE</div>
+
+  <script>
+    const MDS_URL = 'https://127.0.0.1:15003';
+    let attempts = 0;
+
+    function checkReady() {
+      attempts++;
+      const statusEl = document.getElementById('status');
+
+      fetch(MDS_URL, { mode: 'no-cors' })
+        .then(() => {
+          statusEl.textContent = 'CONNECTED';
+          setTimeout(() => {
+            window.location.href = MDS_URL;
+          }, 500);
+        })
+        .catch(() => {
+          if (attempts < 10) {
+            statusEl.textContent = 'STARTING NODE';
+          } else if (attempts < 30) {
+            statusEl.textContent = 'LOADING BLOCKCHAIN';
+          } else {
+            statusEl.textContent = 'ALMOST READY';
+          }
+          setTimeout(checkReady, 2000);
+        });
+    }
+
+    setTimeout(checkReady, 3000);
+  </script>
+</body>
+</html>

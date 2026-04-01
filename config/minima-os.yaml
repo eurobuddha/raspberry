@@ -1,0 +1,19 @@
+include:
+  file: trixie-minbase.yaml
+
+device:
+  hostname: minima
+
+image:
+  name: minima-os
+  root_part_size: 4000
+
+layer:
+  app: minima-kiosk
+
+kiosk:
+  url: '"https://127.0.0.1:15003"'
+
+splash:
+  image_path: "@SRCROOT/assets/splash.tga"
+  update_cmdline: y
