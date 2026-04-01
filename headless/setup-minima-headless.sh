@@ -104,7 +104,7 @@ User=minima
 Group=minima
 WorkingDirectory=/opt/minima
 ExecStart=/usr/bin/java -Xmx256m -jar /opt/minima/minima.jar \
-    -port 15001 \
+    -port 9001 \
     -data /home/minima/.minima \
     -mdsenable \
     -mdspassword "${MDS_PASSWORD}" \
@@ -179,7 +179,7 @@ fi
 step "Waiting for Minima to start..."
 
 for i in $(seq 1 30); do
-  if curl -sk https://localhost:15003 -o /dev/null 2>&1; then
+  if curl -sk https://localhost:9005 -o /dev/null 2>&1; then
     info "Minima MDS Hub is running!"
     break
   fi
@@ -200,10 +200,11 @@ echo -e "  ${DIM}─────────────────────
 echo ""
 echo -e "  ${GREEN}${BOLD}Setup complete!${NC}"
 echo ""
-echo -e "  ${BOLD}MDS Hub:${NC}     https://${IP_ADDR}:15003"
-echo -e "  ${BOLD}            ${NC} https://minima.local:15003"
+echo -e "  ${BOLD}MDS Hub:${NC}     https://${IP_ADDR}:9005"
+echo -e "  ${BOLD}            ${NC} https://minima.local:9005"
 echo -e "  ${BOLD}Password:${NC}    minima"
-echo -e "  ${BOLD}Node port:${NC}   15001"
+echo -e "  ${BOLD}Node port:${NC}   9001"
+echo -e "  ${BOLD}RPC port:${NC}    9002"
 echo -e "  ${BOLD}Service:${NC}     sudo systemctl {status|restart|stop} minima-node"
 echo ""
 echo -e "  ${DIM}Open the MDS Hub URL from any device on your network.${NC}"

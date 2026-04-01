@@ -9,7 +9,7 @@ User=minima
 Group=minima
 WorkingDirectory=/opt/minima
 ExecStart=/usr/bin/java -Xmx256m -jar /opt/minima/minima.jar \
-    -port 15001 \
+    -port 9001 \
     -data /home/minima/.minima \
     -mdsenable \
     -mdspassword "${MDS_PASSWORD}" \

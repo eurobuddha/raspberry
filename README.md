@@ -18,7 +18,7 @@ A flashable Raspberry Pi image that boots straight into the Minima MDS Hub. Plug
    ```bash
    curl -sL https://raw.githubusercontent.com/eurobuddha/raspberry/main/headless/setup-minima-headless.sh | bash
    ```
-4. Open `https://minima.local:15003` from any device on your network
+4. Open `https://minima.local:9005` from any device on your network
 
 See [headless/README.md](headless/README.md) for details.
 
@@ -56,13 +56,14 @@ The image lands in `output/minima-os.img`.
 │  ├── minima-node.service (Java JAR)     │
 │  └── minima-kiosk.service               │
 │      └── Cage (Wayland) → Chromium      │
-│          └── https://127.0.0.1:15003   │
+│          └── https://127.0.0.1:9005    │
 ├─────────────────────────────────────────┤
 │  Raspberry Pi OS (Bookworm arm64)       │
 └─────────────────────────────────────────┘
 ```
 
 - **Minima** runs as a systemd service, auto-starts on boot, auto-restarts on crash
+- **MDS Hub** serves at `https://localhost:9005` — the MiniDapp System where you manage MiniDapps, check balance, send transactions
 - **Cage** is a Wayland kiosk compositor — runs one app fullscreen, no desktop, no escape
 - **Chromium** in kiosk mode points at the MDS Hub on localhost
 - **Plymouth** shows a Minima boot splash instead of Linux text
@@ -73,8 +74,9 @@ The image lands in `output/minima-os.img`.
 | Setting | Default |
 |---------|---------|
 | MDS Password | `minima` |
-| Node Port | `15001` |
-| MDS Hub | `https://<ip>:15003` |
+| Node Port | `9001` |
+| RPC Port | `9002` |
+| MDS Hub | `https://<ip>:9005` |
 
 Change the MDS password via the Security MiniDapp or:
 ```bash
@@ -113,11 +115,11 @@ raspberry/
 
 ## Ports
 
-| Port  | Service          |
-|-------|------------------|
-| 15001 | Minima P2P       |
-| 15002 | Minima RPC       |
-| 15003 | MDS Hub (HTTPS)  |
+| Port | Service                    |
+|------|----------------------------|
+| 9001 | Minima P2P                 |
+| 9002 | Minima RPC                 |
+| 9005 | MDS Hub (HTTPS)            |
 
 ## Hardware Notes
 

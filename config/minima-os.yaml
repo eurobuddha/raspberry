@@ -12,7 +12,7 @@ layer:
   app: minima-kiosk
 
 kiosk:
-  url: '"https://127.0.0.1:15003"'
+  url: '"https://127.0.0.1:9005"'
 
 splash:
   image_path: "@SRCROOT/assets/splash.tga"
