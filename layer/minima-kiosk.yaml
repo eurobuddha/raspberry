@@ -19,7 +19,7 @@ mmdebstrap:
     - avahi-daemon
     - network-manager
     - curl
-    - zram-tools
+    - systemd-zram-generator
     - plymouth
     - plymouth-themes
 
@@ -79,9 +79,10 @@ mmdebstrap:
     echo "tmpfs /tmp tmpfs defaults,noatime,nosuid,size=128m 0 0" >> "$ROOTFS/etc/fstab"
 
     # zram swap config
-    cat > "$ROOTFS/etc/default/zramswap" << 'ZRAM'
-ALGO=zstd
-PERCENT=50
+    cat > "$ROOTFS/etc/systemd/zram-generator.conf" << 'ZRAM'
+[zram0]
+compression-algorithm = zstd
+zram-size = ram / 2
 ZRAM
 
     # ── Auto-login minima user on tty1 (needed for Cage) ──

@@ -157,17 +157,18 @@ else
 fi
 
 # Enable zram swap (better than SD card swap)
-if ! command -v zramctl &>/dev/null; then
-  sudo apt-get install -y zram-tools
+if ! dpkg -s systemd-zram-generator &>/dev/null 2>&1; then
+  sudo apt-get install -y systemd-zram-generator
 fi
-if [[ ! -f /etc/default/zramswap ]]; then
-  sudo tee /etc/default/zramswap > /dev/null << 'ZRAM'
-ALGO=zstd
-PERCENT=50
+if [[ ! -f /etc/systemd/zram-generator.conf ]]; then
+  sudo tee /etc/systemd/zram-generator.conf > /dev/null << 'ZRAM'
+[zram0]
+compression-algorithm = zstd
+zram-size = ram / 2
 ZRAM
-  sudo systemctl enable zramswap
-  sudo systemctl start zramswap
-  info "zram swap enabled (256MB compressed)."
+  sudo systemctl daemon-reload
+  sudo systemctl start systemd-zram-setup@zram0.service
+  info "zram swap enabled (50% of RAM, zstd compressed)."
 else
   info "zram swap already configured."
 fi
