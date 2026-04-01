@@ -73,7 +73,7 @@ sudo mkdir -p /home/minima/.minima
 sudo chown minima:minima /home/minima/.minima
 
 # Download minima.jar
-JAR_URL="https://github.com/nicholasHTM/Minima/raw/refs/heads/master/jar/minima.jar"
+JAR_URL="https://github.com/minima-global/Minima/raw/master/jar/minima.jar"
 
 echo -e "  ${DIM}Downloading minima.jar...${NC}"
 sudo curl -sfL "$JAR_URL" -o /opt/minima/minima.jar || fail "Failed to download minima.jar"

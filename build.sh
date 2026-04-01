@@ -21,7 +21,7 @@ NC='\033[0m'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUTPUT_DIR="$SCRIPT_DIR/output"
 JAR_PATH="$SCRIPT_DIR/overlay/opt/minima/minima.jar"
-JAR_URL="https://github.com/nicholasHTM/Minima/raw/refs/heads/master/jar/minima.jar"
+JAR_URL="https://github.com/minima-global/Minima/raw/master/jar/minima.jar"
 NATIVE=false
 
 info()  { echo -e "  ${GREEN}✓${NC} $1"; }
