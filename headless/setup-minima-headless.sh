@@ -87,7 +87,24 @@ info "minima.jar installed to /opt/minima/"
 # ---- Set default MDS password ----
 
 if [[ ! -f /etc/minima/minima.env ]]; then
-  echo 'MDS_PASSWORD=minima' | sudo tee /etc/minima/minima.env > /dev/null
+  sudo tee /etc/minima/minima.env > /dev/null << 'ENVFILE'
+# Minima Node Configuration
+# Uncomment and edit, then: sudo systemctl daemon-reload && sudo systemctl restart minima-node
+#
+# Port layout: 9001 P2P | 9003 MDS Hub | 9004 MDS Cmd | 9005 RPC
+
+MDS_PASSWORD=minima
+#MINIMA_PORT=9001
+#MINIMA_DATA=/home/minima/.minima
+#MINIMA_DBPASSWORD=minima
+#MINIMA_RPCPASSWORD=
+#MINIMA_ISCLIENT=false
+#MINIMA_ARCHIVE=false
+#MINIMA_MEGAMMR=false
+#MINIMA_NOP2P=false
+#MINIMA_SOLO=false
+#MINIMA_SEED=
+ENVFILE
   sudo chmod 600 /etc/minima/minima.env
   info "Default MDS password set to 'minima'"
 else
@@ -109,15 +126,16 @@ Type=simple
 User=minima
 Group=minima
 WorkingDirectory=/opt/minima
+EnvironmentFile=/etc/minima/minima.env
 ExecStart=/usr/bin/java -Xmx256m -jar /opt/minima/minima.jar \
-    -port 9001 \
-    -data /home/minima/.minima \
+    -port ${MINIMA_PORT:-9001} \
+    -data ${MINIMA_DATA:-/home/minima/.minima} \
     -mdsenable \
     -mdspassword "${MDS_PASSWORD}" \
-    -rpcenable
+    -rpcenable \
+    -daemon
 Restart=always
 RestartSec=10
-EnvironmentFile=/etc/minima/minima.env
 NoNewPrivileges=true
 ProtectSystem=strict
 ReadWritePaths=/home/minima/.minima
