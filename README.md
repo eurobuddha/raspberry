@@ -2,14 +2,7 @@
 
 A flashable Raspberry Pi image that boots straight into the Minima MDS Hub. Plug in, power on, you're running a Minima node.
 
-## Builds
-
-| Build | Target | Experience |
-|-------|--------|------------|
-| **Kiosk** (Pi 4/5) | Pi 4, Pi 5 (4GB+) | Full-screen MDS Hub on HDMI, boot splash, dedicated appliance |
-| **Headless** (Pi Zero 2 W) | Pi Zero 2 W | No display — access MDS Hub from phone/laptop browser |
-
-## Quick Start — Headless (Pi Zero 2 W)
+## Quick Start — Headless (Pi 4 / Pi 5)
 
 1. Flash **Raspberry Pi OS Lite (64-bit)** with [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
    - Enable SSH and configure WiFi in the imager settings
@@ -69,48 +62,23 @@ The image lands in `output/minima-os.img`.
 - **Plymouth** shows a Minima boot splash instead of Linux text
 - **avahi** makes the device reachable as `minima.local`
 
-## Default Credentials
+## Configuration
 
-| Setting | Default |
-|---------|---------|
-| MDS Password | `minima` |
-| Node Port | `9001` |
-| MDS Hub | `https://<ip>:9003` |
-| RPC Port | `9005` |
+All config lives in `/etc/minima/minima.env` using the `MINIMA_` prefix:
 
-Change the MDS password via the Security MiniDapp or:
 ```bash
-sudo nano /etc/minima/minima.env   # edit MDS_PASSWORD
-sudo systemctl restart minima-node
+sudo nano /etc/minima/minima.env
+sudo systemctl daemon-reload && sudo systemctl restart minima-node
 ```
 
-## Project Structure
+Minima reads `MINIMA_` environment variables natively. Example:
 
 ```
-raspberry/
-├── config/
-│   └── minima-os.yaml              # rpi-image-gen main config
-├── layer/
-│   └── minima-kiosk.yaml           # Custom layer (Java + Cage + Chromium)
-├── overlay/
-│   ├── etc/
-│   │   ├── systemd/system/
-│   │   │   ├── minima-node.service
-│   │   │   └── minima-kiosk.service
-│   │   ├── minima/minima.env
-│   │   └── chromium-browser/policies/managed/minima.json
-│   ├── opt/minima/
-│   │   ├── kiosk-start.sh          # Waits for node, launches browser
-│   │   └── loading.html            # Shown while node starts
-│   └── usr/share/plymouth/themes/minima/
-├── headless/
-│   ├── setup-minima-headless.sh    # One-script Pi Zero 2 W setup
-│   └── README.md
-├── scripts/
-│   └── generate-logo.sh
-├── build.sh                        # Top-level build script
-├── Dockerfile.build                # Docker cross-compile env
-└── README.md
+MINIMA_PORT=9001
+MINIMA_MDSPASSWORD=minima
+MINIMA_MDSENABLE=true
+MINIMA_RPCENABLE=true
+MINIMA_MEGAMMR=true
 ```
 
 ## Ports
@@ -121,12 +89,13 @@ raspberry/
 | 9003 | MDS Hub (HTTPS)            |
 | 9005 | Minima RPC                 |
 
-## Hardware Notes
+## Hardware
 
 - **Pi 5 (4/8GB)**: Best performance. Primary target.
 - **Pi 4 (4/8GB)**: Excellent. Fully supported.
-- **Pi 4 (2GB)**: Works but tight. Chromium + Java use ~500MB.
-- **Pi Zero 2 W (512MB)**: Headless only. Not enough RAM for kiosk browser + Java.
+- **Pi 4 (2GB)**: Works but tight with kiosk mode.
+
+Pi Zero 2 W (512MB) is not recommended — insufficient RAM for stable operation.
 
 ## License
 

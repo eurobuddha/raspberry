@@ -1,13 +1,13 @@
-# Minima Headless Node — Raspberry Pi Zero 2 W
+# Minima Headless Node — Raspberry Pi 4 / Pi 5
 
-Run a Minima node on a Pi Zero 2 W. No monitor needed — access the MDS Hub from any device on your network.
+Run a Minima node on a Raspberry Pi. No monitor needed — access the MDS Hub from any device on your network.
 
 ## What You Need
 
-- Raspberry Pi Zero 2 W
+- Raspberry Pi 4 or Pi 5 (4GB+ recommended)
 - microSD card (16GB+)
-- Power supply (5V/2.5A micro-USB)
-- WiFi network
+- Power supply
+- WiFi or Ethernet
 
 ## Setup
 
@@ -15,9 +15,9 @@ Run a Minima node on a Pi Zero 2 W. No monitor needed — access the MDS Hub fro
 
 Open [Raspberry Pi Imager](https://www.raspberrypi.com/software/) and:
 
-1. Choose **Raspberry Pi Zero 2 W** as the device
+1. Choose your Pi model as the device
 2. Choose **Raspberry Pi OS Lite (64-bit)** — under "Raspberry Pi OS (other)"
-3. Click the **gear icon** (or Edit Settings) before flashing:
+3. Click **Edit Settings** before flashing:
    - Set hostname to `minima`
    - Enable SSH (use password authentication)
    - Set username/password (e.g. `pi` / your password)
@@ -26,8 +26,8 @@ Open [Raspberry Pi Imager](https://www.raspberrypi.com/software/) and:
 
 ### 2. Boot and Connect
 
-1. Insert the microSD into the Pi Zero 2 W and power it on
-2. Wait ~90 seconds for first boot
+1. Insert the microSD into the Pi and power it on
+2. Wait ~60 seconds for first boot
 3. SSH in:
    ```
    ssh pi@minima.local
@@ -39,11 +39,6 @@ Open [Raspberry Pi Imager](https://www.raspberrypi.com/software/) and:
 curl -sL https://raw.githubusercontent.com/eurobuddha/raspberry/main/headless/setup-minima-headless.sh | bash
 ```
 
-Or if you have the script locally:
-```bash
-bash setup-minima-headless.sh
-```
-
 ### 4. Access the MDS Hub
 
 From any device on your network, open:
@@ -52,8 +47,26 @@ From any device on your network, open:
 https://minima.local:9003
 ```
 
-- **Password:** `minima` (change this via the Security MiniDapp)
-- You'll see a certificate warning — click "Advanced" then "Proceed" (self-signed cert, this is normal)
+- **Password:** `minima` (change via the Security MiniDapp)
+- You'll see a certificate warning — click "Advanced" then "Proceed" (self-signed cert, normal)
+
+## Configuration
+
+All config is in `/etc/minima/minima.env` using the `MINIMA_` prefix. Minima reads these natively.
+
+```bash
+sudo nano /etc/minima/minima.env
+sudo systemctl daemon-reload && sudo systemctl restart minima-node
+```
+
+Example:
+```
+MINIMA_PORT=9001
+MINIMA_MDSPASSWORD=minima
+MINIMA_MDSENABLE=true
+MINIMA_RPCENABLE=true
+MINIMA_MEGAMMR=true
+```
 
 ## Managing the Node
 
@@ -69,20 +82,7 @@ sudo systemctl restart minima-node
 
 # Stop
 sudo systemctl stop minima-node
-
-# Change MDS password
-sudo nano /etc/minima/minima.env    # edit MDS_PASSWORD=yourpassword
-sudo systemctl restart minima-node
 ```
-
-## Memory Optimizations
-
-The setup script applies these automatically for the Pi Zero 2 W's 512MB RAM:
-
-- **GPU memory → 16MB** (no display needed, frees ~100MB)
-- **zram swap** (compressed RAM swap, avoids SD card wear)
-- **tmpfs on /tmp** (reduces SD card writes)
-- **Java heap capped at 256MB** (`-Xmx256m`)
 
 ## Ports
 
@@ -94,8 +94,4 @@ The setup script applies these automatically for the Pi Zero 2 W's 512MB RAM:
 
 ## Installing MiniDapps
 
-Once the MDS Hub is running, you can install MiniDapps (`.mds.zip` files) via the Hub interface at `https://minima.local:9003`, or via RPC:
-
-```bash
-curl -k https://localhost:9005/mds%20action:install%20file:/path/to/mydapp.mds.zip
-```
+Install MiniDapps (`.mds.zip` files) via the Hub interface at `https://minima.local:9003`.

@@ -9,13 +9,7 @@ User=minima
 Group=minima
 WorkingDirectory=/opt/minima
 EnvironmentFile=/etc/minima/minima.env
-ExecStart=/usr/bin/java -Xmx256m -jar /opt/minima/minima.jar \
-    -port 9001 \
-    -data /home/minima/.minima \
-    -mdsenable \
-    -mdspassword ${MDS_PASSWORD} \
-    -rpcenable \
-    -daemon
+ExecStart=/usr/bin/java -Xmx2g -jar /opt/minima/minima.jar -daemon
 Restart=always
 RestartSec=10
 
