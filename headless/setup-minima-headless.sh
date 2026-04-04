@@ -63,6 +63,15 @@ else
   info "User 'minima' created."
 fi
 
+# Add current user to minima group so they can read/write minima data (backups etc)
+CURRENT_USER=$(whoami)
+if ! groups "$CURRENT_USER" | grep -q '\bminima\b'; then
+  sudo usermod -aG minima "$CURRENT_USER"
+  info "Added '$CURRENT_USER' to minima group."
+else
+  info "'$CURRENT_USER' already in minima group."
+fi
+
 # ---- Set up Minima ----
 
 step "Installing Minima node..."
@@ -71,6 +80,8 @@ sudo mkdir -p /opt/minima
 sudo mkdir -p /etc/minima
 sudo mkdir -p /home/minima/.minima
 sudo chown minima:minima /home/minima/.minima
+sudo chmod 770 /home/minima/.minima
+sudo chmod 750 /home/minima
 
 # Download minima.jar
 JAR_URL="https://github.com/minima-global/Minima/raw/master/jar/minima.jar"
